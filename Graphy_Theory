@@ -1,0 +1,42 @@
+Python 2.7.3 (default, Apr 10 2012, 23:31:26) [MSC v.1500 32 bit (Intel)] on win32
+Type "copyright", "credits" or "license()" for more information.
+>>> def parse_fasta(fasta_input):
+	sequences = {}
+	current_label = None
+	for line in fasta_input.strip().splitlines(): #aplit() splitlines() removes the newline charater (whitespaces) from the begining and the end
+		line = line.strip()
+		if not line:
+			continue
+		if line.startswith(">"): #if the liine starts with ">"
+			current_label = line[1:] #stores eberything from index 1 all the way to the end
+			sequences[current_label] = [] #sequences is a dictionary, while cuurent_label is the key
+		else:
+			sequences[current_label].append(line) #the DNA string is the value
+	return {
+		label: "".join(seq_list) for label, seq_list in sequences.items()
+              }
+
+>>> def get_overlap_graph(sample_fasta, k =3):
+	sequences = parse_fasta(fasta_input)
+	edges = []
+	for name1, s in sequences.items():
+		for name2, t in sequences.items():
+			if name1 != name2  and s[-k:] == t[:k]:
+				edges.append((name1, name2))
+	return edges
+
+>>> fasta_input = """
+>Rosalind_0498
+AAATAAA
+>Rosalind_2391
+AAATTTT
+>Rosalind_2323
+TTTTCCC
+>Rosalind_0442
+AAATCCC
+>Rosalind_5013
+GGGTGGG
+"""
+>>> get_overlap_graph(fasta_input, k=3)
+[('Rosalind_0498', 'Rosalind_0442'), ('Rosalind_0498', 'Rosalind_2391'), ('Rosalind_2391', 'Rosalind_2323')]
+>>> 
